@@ -1,21 +1,25 @@
 import { Image, Text, View } from 'react-native';
 
+import { useResponsive } from '@/hooks';
+
 export function HomeHeader() {
+  const { t } = useResponsive();
+
   return (
     <View
       style={{
         position: 'absolute',
-        top: 24,
-        left: 24,
-        right: 24,
+        top: t(24, 12),
+        left: t(24, 16),
+        right: t(24, 16),
         zIndex: 10,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '#ffffff',
-        borderRadius: 11,
-        paddingHorizontal: 16,
-        paddingVertical: 8,
+        borderRadius: t(11, 11),
+        paddingHorizontal: t(16, 12),
+        paddingVertical: t(8, 6),
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.05,
@@ -25,14 +29,14 @@ export function HomeHeader() {
     >
       <Image
         source={{ uri: 'https://c.animaapp.com/6tGBECKN/img/trio-purple-1@2x.png' }}
-        style={{ width: 51, height: 51, borderRadius: 4 }}
+        style={{ width: t(51, 36), height: t(51, 36), borderRadius: 4 }}
         resizeMode="cover"
       />
       <Text
         style={{
           fontFamily: 'Inter_500Medium',
-          fontSize: 11,
-          letterSpacing: 2,
+          fontSize: t(11, 9),
+          letterSpacing: t(2, 1.5),
           color: '#6e6e6e',
         }}
       >

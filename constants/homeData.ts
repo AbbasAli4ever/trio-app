@@ -122,6 +122,55 @@ export const SMART_BUNDLES: SmartBundle[] = [
   },
 ];
 
+export type BundleCard = {
+  id: string;
+  title: string;
+  description: string;
+  features: string[];
+  price: string;
+  originalPrice: string;
+  image: string;
+};
+
+export const PRECURATED_BUNDLES: BundleCard[] = [
+  {
+    id: 'hitea',
+    title: 'Hi-Tea for Two + Bouquet',
+    description: 'Hi-Tea For Two (With The Robot Cake-Trolley) + A Books & Roses Bouquet To Take Home.',
+    features: ['Hi-Tea for 2', 'Books & Roses'],
+    price: 'Rs 10,350',
+    originalPrice: 'Rs 11,499',
+    image: 'https://c.animaapp.com/moy8bt6h4zSfsO/img/rectangle-5-3.svg',
+  },
+  {
+    id: 'cinema',
+    title: 'Cinema Date',
+    description: 'Two Cinema Seats, One Shareable Plate, Two Mocktails.',
+    features: ['2 Cinema seats', 'Cheese Board', '2 Lavender Lemonades'],
+    price: 'Rs 10,350',
+    originalPrice: 'Rs 11,499',
+    image: 'https://c.animaapp.com/moy8bt6h4zSfsO/img/rectangle-5-1.svg',
+  },
+  {
+    id: 'birthday',
+    title: 'Birthday Bundle',
+    description: 'Pink Full Decor + Strawberry Bouquet + Cake On The Robot Trolley + Cinema Slot.',
+    features: ['Pink Full decor (Rs 10,000)', 'Strawberry Bouquet'],
+    price: 'Rs 10,350',
+    originalPrice: 'Rs 11,499',
+    image: 'https://c.animaapp.com/moy8bt6h4zSfsO/img/rectangle-5-2.svg',
+  },
+  {
+    id: 'make-it-a-date',
+    title: 'Make-It-A-Date',
+    description: 'Red Decor — Classic + Hi-Tea For Two With The Robot Trolley.',
+    features: ['Red Classic decor (Rs 5,000)', 'Hi-Tea for 2'],
+    price: 'Rs 10,350',
+    originalPrice: 'Rs 11,499',
+    image: 'https://c.animaapp.com/moy8bt6h4zSfsO/img/rectangle-5.png',
+  },
+];
+
 export const BROWSE_CARDS = [
   {
     id: 'dining',

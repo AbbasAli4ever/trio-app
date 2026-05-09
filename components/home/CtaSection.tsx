@@ -5,11 +5,11 @@ import { useResponsive } from '@/hooks';
 import { CTA_BOUQUET, CTA_SPIN } from '@/constants/homeData';
 
 export function CtaSection() {
-  const { isTablet } = useResponsive();
-  const cardHeight = isTablet ? 153 : 140;
+  const { t } = useResponsive();
+  const cardHeight = t(153, 120);
 
   return (
-    <View style={{ flexDirection: 'row', gap: 16 }}>
+    <View style={{ flexDirection: 'row', gap: t(16, 10) }}>
       {/* Spin CTA */}
       <TouchableOpacity activeOpacity={0.85} style={{ flex: 1 }}>
         <LinearGradient
@@ -18,21 +18,21 @@ export function CtaSection() {
           end={{ x: 1, y: 0 }}
           style={{
             height: cardHeight,
-            borderRadius: 22,
+            borderRadius: t(22, 16),
             overflow: 'hidden',
             flexDirection: 'row',
             alignItems: 'center',
-            padding: 22,
-            gap: 16,
+            padding: t(22, 14),
+            gap: t(16, 10),
           }}
         >
           <View
             style={{
               position: 'absolute',
-              top: 30,
-              left: 30,
-              width: 96,
-              height: 96,
+              top: t(30, 20),
+              left: t(30, 16),
+              width: t(96, 70),
+              height: t(96, 70),
               backgroundColor: '#c46ced',
               borderRadius: 53,
               opacity: 1,
@@ -45,37 +45,18 @@ export function CtaSection() {
           />
           <Image
             source={{ uri: CTA_SPIN.image }}
-            style={{ width: 110, height: 110, marginTop: -5, marginBottom: -5 }}
+            style={{ width: t(110, 80), height: t(110, 80), marginTop: -5, marginBottom: -5 }}
             resizeMode="contain"
           />
-          <View style={{ flex: 1, gap: 12, zIndex: 1 }}>
-            <Text
-              style={{
-                fontFamily: 'Montserrat_400Regular',
-                fontSize: 15,
-                color: '#ffffff',
-              }}
-            >
+          <View style={{ flex: 1, gap: t(12, 6), zIndex: 1 }}>
+            <Text style={{ fontFamily: 'Montserrat_400Regular', fontSize: t(15, 11), color: '#ffffff' }}>
               {CTA_SPIN.tagline}
             </Text>
-            <View style={{ gap: 4 }}>
-              <Text
-                style={{
-                  fontFamily: 'PlayfairDisplay_600SemiBold',
-                  fontSize: isTablet ? 32 : 24,
-                  color: '#ffffff',
-                  letterSpacing: -0.5,
-                }}
-              >
+            <View style={{ gap: t(4, 2) }}>
+              <Text style={{ fontFamily: 'PlayfairDisplay_600SemiBold', fontSize: t(32, 18), color: '#ffffff', letterSpacing: -0.5 }}>
                 {CTA_SPIN.title}
               </Text>
-              <Text
-                style={{
-                  fontFamily: 'Inter_400Regular',
-                  fontSize: 12,
-                  color: '#ffffff',
-                }}
-              >
+              <Text style={{ fontFamily: 'Inter_400Regular', fontSize: t(12, 10), color: '#ffffff' }}>
                 {CTA_SPIN.subtitle}
               </Text>
             </View>
@@ -90,11 +71,11 @@ export function CtaSection() {
           flex: 1,
           height: cardHeight,
           backgroundColor: '#ffffff',
-          borderRadius: 26,
+          borderRadius: t(26, 16),
           flexDirection: 'row',
           alignItems: 'center',
-          padding: 22,
-          gap: 22,
+          padding: t(22, 14),
+          gap: t(22, 10),
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.13,
@@ -104,39 +85,26 @@ export function CtaSection() {
       >
         <View
           style={{
-            width: 60,
-            height: 60,
-            borderRadius: 30,
+            width: t(60, 44),
+            height: t(60, 44),
+            borderRadius: t(30, 22),
             backgroundColor: '#fbebf0',
             alignItems: 'center',
             justifyContent: 'center',
-           
+            overflow: 'hidden',
           }}
         >
           <Image
             source={{ uri: CTA_BOUQUET.image }}
-            style={{ width: 70, height: 78 }}
+            style={{ width: t(70, 50), height: t(78, 56) }}
             resizeMode="contain"
           />
         </View>
-        <View style={{ flex: 1, gap: 4 }}>
-          <Text
-            style={{
-              fontFamily: 'PlayfairDisplay_500Medium',
-              fontSize: isTablet ? 21 : 17,
-              color: '#1a1a1a',
-            }}
-          >
+        <View style={{ flex: 1, gap: t(4, 3) }}>
+          <Text style={{ fontFamily: 'PlayfairDisplay_500Medium', fontSize: t(21, 14), color: '#1a1a1a' }}>
             {CTA_BOUQUET.title}
           </Text>
-          <Text
-            style={{
-              fontFamily: 'Inter_400Regular',
-              fontSize: 12,
-              color: '#6e6e6e',
-              lineHeight: 18,
-            }}
-          >
+          <Text style={{ fontFamily: 'Inter_400Regular', fontSize: t(12, 10), color: '#6e6e6e', lineHeight: t(18, 14) }}>
             {CTA_BOUQUET.subtitle}
           </Text>
         </View>
@@ -144,22 +112,14 @@ export function CtaSection() {
           style={{
             backgroundColor: '#775596',
             borderRadius: 5,
-            paddingHorizontal: 6,
-            paddingVertical: 3,
+            paddingHorizontal: t(6, 5),
+            paddingVertical: t(3, 2),
             position: 'absolute',
-            right: 20,
-            bottom: 15,
+            right: t(20, 12),
+            bottom: t(15, 10),
           }}
         >
-          <Text
-            style={{
-              fontFamily: 'Inter_400Regular',
-              fontSize: 16,
-              color: '#ffffff',
-            }}
-          >
-            →
-          </Text>
+          <Text style={{ fontFamily: 'Inter_400Regular', fontSize: t(16, 13), color: '#ffffff' }}>→</Text>
         </View>
       </TouchableOpacity>
     </View>

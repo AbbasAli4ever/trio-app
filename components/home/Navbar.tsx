@@ -8,11 +8,16 @@ type NavItemProps = {
   label: string;
   imageSrc: string | null;
   isActive: boolean;
+  t: (a: number, b?: number) => number;
   fontSize: number;
   onPress: () => void;
 };
 
-function NavItem({ label, imageSrc, isActive, fontSize, onPress }: NavItemProps) {
+function NavItem({ label, imageSrc, isActive, t, fontSize, onPress }: NavItemProps) {
+  const pX = t(16, 10);
+  const pY = t(9.85, 7);
+  const imgSize = t(28, 20);
+
   if (isActive) {
     return (
       <TouchableOpacity
@@ -24,26 +29,13 @@ function NavItem({ label, imageSrc, isActive, fontSize, onPress }: NavItemProps)
           justifyContent: 'center',
           backgroundColor: '#1e0736',
           borderRadius: 67.69,
-          paddingHorizontal: 16,
-          paddingVertical: 9.85,
-          gap: 4.92,
+          paddingHorizontal: pX,
+          paddingVertical: pY,
+          gap: 4,
         }}
       >
-        {imageSrc && (
-          <Image
-            source={{ uri: imageSrc }}
-            style={{ width: 28, height: 28 }}
-            resizeMode="cover"
-          />
-        )}
-        <Text
-          style={{
-            fontFamily: 'Montserrat_700Bold',
-            fontSize,
-            lineHeight: fontSize * 1.4,
-            color: '#ffffff',
-          }}
-        >
+        {imageSrc && <Image source={{ uri: imageSrc }} style={{ width: imgSize, height: imgSize }} resizeMode="cover" />}
+        <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize, lineHeight: fontSize * 1.4, color: '#ffffff' }}>
           {label}
         </Text>
       </TouchableOpacity>
@@ -60,11 +52,11 @@ function NavItem({ label, imageSrc, isActive, fontSize, onPress }: NavItemProps)
         justifyContent: 'center',
         backgroundColor: '#ffffff',
         borderRadius: 66.31,
-        borderWidth: 2.41,
+        borderWidth: t(2.41, 1.5),
         borderColor: '#ffffff',
-        paddingHorizontal: 16,
-        paddingVertical: 9.85,
-        gap: 4.92,
+        paddingHorizontal: pX,
+        paddingVertical: pY,
+        gap: 4,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 5.38 },
         shadowOpacity: 0.05,
@@ -72,21 +64,8 @@ function NavItem({ label, imageSrc, isActive, fontSize, onPress }: NavItemProps)
         elevation: 2,
       }}
     >
-      {imageSrc && (
-        <Image
-          source={{ uri: imageSrc }}
-          style={{ width: 28, height: 28 }}
-          resizeMode="cover"
-        />
-      )}
-      <Text
-        style={{
-          fontFamily: 'Montserrat_500Medium',
-          fontSize,
-          lineHeight: fontSize * 1.4,
-          color: '#1e0736',
-        }}
-      >
+      {imageSrc && <Image source={{ uri: imageSrc }} style={{ width: imgSize, height: imgSize }} resizeMode="cover" />}
+      <Text style={{ fontFamily: 'Montserrat_500Medium', fontSize, lineHeight: fontSize * 1.4, color: '#1e0736' }}>
         {label}
       </Text>
     </TouchableOpacity>
@@ -94,26 +73,19 @@ function NavItem({ label, imageSrc, isActive, fontSize, onPress }: NavItemProps)
 }
 
 export function Navbar() {
-  const { isTablet } = useResponsive();
+  const { t } = useResponsive();
   const [activeId, setActiveId] = useState('home');
-  const fontSize = isTablet ? 17.23 : 15;
+  const fontSize = t(17.23, 12);
 
   return (
     <View
-      style={{
-        position: 'absolute',
-        bottom: isTablet ? 20 : 16,
-        left: 0,
-        right: 0,
-        alignItems: 'center',
-        zIndex: 100,
-      }}
+      style={{ position: 'absolute', bottom: t(20, 12), left: 0, right: 0, alignItems: 'center', zIndex: 100 }}
       pointerEvents="box-none"
     >
       <View
         style={{
           backgroundColor: '#ffffff',
-          borderRadius: 14.77,
+          borderRadius: t(14.77, 12),
           borderWidth: 1,
           borderColor: '#e3e3e3',
           shadowColor: '#000',
@@ -129,9 +101,9 @@ export function Navbar() {
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{
-            paddingHorizontal: 9.85,
-            paddingVertical: 9.85,
-            gap: 8,
+            paddingHorizontal: t(9.85, 6),
+            paddingVertical: t(9.85, 6),
+            gap: t(8, 5),
             flexDirection: 'row',
             alignItems: 'flex-end',
           }}
@@ -143,6 +115,7 @@ export function Navbar() {
               label={option.label}
               imageSrc={option.imageSrc}
               isActive={option.id === activeId}
+              t={t}
               fontSize={fontSize}
               onPress={() => setActiveId(option.id)}
             />
