@@ -68,6 +68,8 @@
   "exclude": [
     "node_modules",
     "assets/*.tsx",
-    "assets/*.ts"
+    "assets/*.ts",
+    "assets/**/*.tsx",
+    "assets/**/*.ts"
   ]
 }

@@ -4,7 +4,7 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 import { useResponsive } from '@/hooks';
 import { SMART_BUNDLES, type SmartBundle } from '@/constants/homeData';
-import { SpecialDayModal } from './SpecialDayModal';
+import { SpecialDayModal, BIRTHDAY_MODAL } from './SpecialDayModal';
 
 function BundleCard({ bundle, cardWidth, cardHeight, t, onAddPress }: {
   bundle: SmartBundle;
@@ -143,7 +143,7 @@ export function SmartBundlesSection() {
         ))}
       </View>
 
-      <SpecialDayModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+      <SpecialDayModal visible={modalVisible} onClose={() => setModalVisible(false)} config={BIRTHDAY_MODAL} />
     </View>
   );
 }

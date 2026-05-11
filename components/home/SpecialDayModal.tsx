@@ -1,15 +1,65 @@
-import { Modal, Pressable, Text, TouchableOpacity, View, Image } from 'react-native';
+import { Modal, Pressable, Text, TouchableOpacity, View, Image, ImageSourcePropType } from 'react-native';
 import { router } from 'expo-router';
 import { useResponsive } from '@/hooks';
 
-const QUICK_ACTIONS = ['View Birthday Bundle', 'Browse Decor'];
+type QuickAction = {
+  label: string;
+  route?: string;
+};
+
+type ModalConfig = {
+  image: ImageSourcePropType;
+  title: string;
+  description: string;
+  quickActions: QuickAction[];
+  ctaLabel: string;
+  ctaRoute?: string;
+  onCtaPress?: () => void;
+};
+
+export const BIRTHDAY_MODAL: ModalConfig = {
+  image: { uri: 'https://c.animaapp.com/moy7pjnb7XftvN/img/birhtday-2-2.png' },
+  title: 'Happy Birthday!',
+  description: 'Two Cinema Seats, One Shareable Plate, Two Mocktails.',
+  quickActions: [
+    { label: 'View Birthday Bundle', route: '/smart-bundles' },
+    { label: 'Browse Decor', route: '/browse-decor' },
+  ],
+  ctaLabel: 'Build the Full Package.',
+  ctaRoute: '/smart-bundles',
+};
+
+export const ANNIVERSARY_MODAL: ModalConfig = {
+  image: require('@/assets/anniversary.svg'),
+  title: 'Anniversary\nMode on',
+  description: 'Romance Pairings Unlocked. Want Us To Set The Table With Rose Petals And Candles?',
+  quickActions: [
+    { label: 'Build Full Package', route: '/smart-bundles' },
+    { label: 'Hi-Tea Spread', route: '/smart-bundles' },
+  ],
+  ctaLabel: 'Build the Full Package.',
+  ctaRoute: '/smart-bundles',
+};
+
+export const SMALL_EVENT_MODAL: ModalConfig = {
+  image: require('@/assets/small-events.svg'),
+  title: 'Small event',
+  description: 'Up To 30 Guests. We Can Do Private Cinema, Hi-Tea Spread And Full Decor, Just Say The Word.',
+  quickActions: [
+    { label: 'Build Full Package', route: '/smart-bundles' },
+    { label: 'Hi-Tea Spread', route: '/smart-bundles' },
+  ],
+  ctaLabel: 'Build the Full Package.',
+  ctaRoute: '/smart-bundles',
+};
 
 type Props = {
   visible: boolean;
   onClose: () => void;
+  config: ModalConfig;
 };
 
-export function SpecialDayModal({ visible, onClose }: Props) {
+export function SpecialDayModal({ visible, onClose, config }: Props) {
   const { t } = useResponsive();
 
   return (
@@ -20,7 +70,6 @@ export function SpecialDayModal({ visible, onClose }: Props) {
       statusBarTranslucent
       onRequestClose={onClose}
     >
-      {/* Backdrop */}
       <Pressable
         style={{
           flex: 1,
@@ -31,7 +80,6 @@ export function SpecialDayModal({ visible, onClose }: Props) {
         }}
         onPress={onClose}
       >
-        {/* Card */}
         <Pressable
           onPress={(e) => e.stopPropagation()}
           style={{
@@ -47,7 +95,7 @@ export function SpecialDayModal({ visible, onClose }: Props) {
             elevation: 12,
           }}
         >
-          {/* Close button — outside card top-right */}
+          {/* Close button */}
           <TouchableOpacity
             onPress={onClose}
             activeOpacity={0.8}
@@ -77,8 +125,8 @@ export function SpecialDayModal({ visible, onClose }: Props) {
             {/* Header: illustration + title */}
             <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: t(16, 14) }}>
               <Image
-                source={{ uri: 'https://c.animaapp.com/moy7pjnb7XftvN/img/birhtday-2-2.png' }}
-                style={{ width: t(117, 96), height: t(136, 112) }}
+                source={config.image}
+                style={{ width: t(117, 96), height: t(130, 108) }}
                 resizeMode="contain"
               />
               <View style={{ flex: 1, gap: t(8, 6), paddingTop: t(4, 2) }}>
@@ -90,7 +138,7 @@ export function SpecialDayModal({ visible, onClose }: Props) {
                     color: '#1e0736',
                   }}
                 >
-                  Happy Birthday!
+                  {config.title}
                 </Text>
                 <Text
                   style={{
@@ -101,7 +149,7 @@ export function SpecialDayModal({ visible, onClose }: Props) {
                     opacity: 0.7,
                   }}
                 >
-                  Two Cinema Seats, One Shareable Plate, Two Mocktails.
+                  {config.description}
                 </Text>
               </View>
             </View>
@@ -120,13 +168,13 @@ export function SpecialDayModal({ visible, onClose }: Props) {
                 Quick Actions
               </Text>
               <View style={{ gap: t(8, 6) }}>
-                {QUICK_ACTIONS.map((label) => (
+                {config.quickActions.map((action) => (
                   <TouchableOpacity
-                    key={label}
+                    key={action.label}
                     activeOpacity={0.8}
                     onPress={() => {
                       onClose();
-                      if (label === 'View Birthday Bundle') router.push('/smart-bundles');
+                      if (action.route) router.push(action.route as never);
                     }}
                     style={{
                       height: t(53, 44),
@@ -137,7 +185,7 @@ export function SpecialDayModal({ visible, onClose }: Props) {
                       flexDirection: 'row',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      paddingHorizontal: t(24, 18),
+                      paddingHorizontal: t(12, 18),
                       shadowColor: '#000',
                       shadowOffset: { width: 0, height: 4.37 },
                       shadowOpacity: 0.03,
@@ -152,9 +200,20 @@ export function SpecialDayModal({ visible, onClose }: Props) {
                         color: '#b076ee',
                       }}
                     >
-                      {label}
+                      {action.label}
                     </Text>
-                    <Text style={{ fontSize: t(17, 14), color: '#b076ee' }}>→</Text>
+                    <View
+                      style={{
+                        width: t(32, 26),
+                        height: t(32, 26),
+                        borderRadius: t(8, 6),
+                        backgroundColor: '#775596',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Text style={{ fontSize: t(15, 12), color: '#ffffff' }}>→</Text>
+                    </View>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -164,6 +223,14 @@ export function SpecialDayModal({ visible, onClose }: Props) {
             <View style={{ gap: t(16, 12), alignItems: 'center' }}>
               <TouchableOpacity
                 activeOpacity={0.88}
+                onPress={() => {
+                  if (config.onCtaPress) {
+                    config.onCtaPress();
+                  } else {
+                    onClose();
+                    if (config.ctaRoute) router.push(config.ctaRoute as never);
+                  }
+                }}
                 style={{
                   width: '100%',
                   height: t(48, 42),
@@ -173,14 +240,8 @@ export function SpecialDayModal({ visible, onClose }: Props) {
                   justifyContent: 'center',
                 }}
               >
-                <Text
-                  style={{
-                    fontFamily: 'Inter_500Medium',
-                    fontSize: t(16, 14),
-                    color: '#ffffff',
-                  }}
-                >
-                  Build the Full Package.
+                <Text style={{ fontFamily: 'Inter_500Medium', fontSize: t(16, 14), color: '#ffffff' }}>
+                  {config.ctaLabel}
                 </Text>
               </TouchableOpacity>
 
@@ -189,13 +250,7 @@ export function SpecialDayModal({ visible, onClose }: Props) {
                 activeOpacity={0.7}
                 style={{ flexDirection: 'row', alignItems: 'center', gap: t(8, 6) }}
               >
-                <Text
-                  style={{
-                    fontFamily: 'Inter_500Medium',
-                    fontSize: t(16, 14),
-                    color: '#1e0736',
-                  }}
-                >
+                <Text style={{ fontFamily: 'Inter_500Medium', fontSize: t(16, 14), color: '#1e0736' }}>
                   I'll Just Browse
                 </Text>
                 <Text style={{ fontSize: t(17, 14), color: '#b076ee' }}>→</Text>
