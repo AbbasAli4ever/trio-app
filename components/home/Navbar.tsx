@@ -8,7 +8,7 @@ import { useTrayStore } from '@/store';
 
 // Last segment → nav id
 const SEGMENT_TO_ID: Record<string, string> = {
-  home: 'home',
+  index: 'home',
   dining: 'dining',
   beverages: 'drinks',
   flowers: 'flowers',
@@ -19,7 +19,7 @@ const SEGMENT_TO_ID: Record<string, string> = {
 
 // Nav id → tab screen name (segment)
 const ID_TO_SEGMENT: Record<string, string> = {
-  home: 'home',
+  home: 'index',
   dining: 'dining',
   drinks: 'beverages',
   flowers: 'flowers',
@@ -152,7 +152,8 @@ export function Navbar() {
               fontSize={fontSize}
               onPress={() => {
                 const segment = ID_TO_SEGMENT[option.id];
-                router.replace(`/(tabs)/${segment}` as any);
+                const path = segment === 'index' ? '/(tabs)' : `/(tabs)/${segment}`;
+                router.replace(path as any);
               }}
             />
           ))}

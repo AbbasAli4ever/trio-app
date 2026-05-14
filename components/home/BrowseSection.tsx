@@ -65,20 +65,20 @@ export function BrowseSection() {
         disableIntervalMomentum
         onScrollBeginDrag={() => { isDragging.current = true; }}
         onMomentumScrollEnd={(e) => {
-          isDragging.current = false;
           updateIndex(e.nativeEvent.contentOffset.x);
+          setTimeout(() => { isDragging.current = false; }, 50);
         }}
         onScrollEndDrag={(e) => {
-          isDragging.current = false;
           updateIndex(e.nativeEvent.contentOffset.x);
+          setTimeout(() => { isDragging.current = false; }, 50);
         }}
         scrollEventThrottle={16}
       >
         {BROWSE_CARDS.map((card) => (
-          <View
+          <TouchableOpacity
             key={card.id}
-            onTouchStart={() => { isDragging.current = false; }}
-            onTouchEnd={() => {
+            activeOpacity={0.9}
+            onPress={() => {
               if (!isDragging.current) router.push(CARD_ROUTES[card.id] as any);
             }}
           >
@@ -113,7 +113,7 @@ export function BrowseSection() {
                 </Text>
               </View>
             </ImageBackground>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
 
