@@ -1,43 +1,75 @@
 import { useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '@/hooks';
+import { SpinResultCard } from './SpinResultCard';
+import { useTrayStore } from '@/store';
 
 const WHEEL_OPTIONS = [
   {
     id: 'bite',
     label: 'Bite',
     image: 'https://c.animaapp.com/mp18tsxfgJ0g8r/img/image-1.png',
-    wheelImage:
-      'https://c.animaapp.com/mp18tsxfgJ0g8r/img/magnific-create-a-3d-restaurant-sp-2916037334-2-1.png',
     cta: 'Spin the Bite wheel',
     subtitle: 'A bestseller from the kitchen',
+    result: {
+      label: 'YOUR BITE',
+      title: 'Hot Honey Burrata',
+      description: 'Tomato, Burrata, Hot Honey, Basil.',
+      priceText: 'TBC',
+      image: 'https://c.animaapp.com/mp2fevugkzU6Ke/img/rectangle-5.png',
+    },
   },
   {
     id: 'bouquet',
     label: 'Bouquet',
     image:
       'https://c.animaapp.com/mp18tsxfgJ0g8r/img/magnific-create-a-realistic-babys--2917355984-2.png',
-    wheelImage:
-      'https://c.animaapp.com/mp18tsxfgJ0g8r/img/magnific-create-a-3d-restaurant-sp-2916037334-2-1.png',
     cta: 'Spin the Bouquet wheel',
     subtitle: 'A fresh seasonal pick',
+    result: {
+      label: 'YOUR BOUQUET',
+      title: 'Garden Rose Cone',
+      description: 'Garden Rose, Eucalyptus, Pink Tissue Wrap.',
+      priceText: 'Rs 2,200',
+      image: 'https://c.animaapp.com/mp18tsxfgJ0g8r/img/magnific-create-a-realistic-babys--2917355984-2.png',
+    },
   },
   {
     id: 'experience',
     label: 'Experience',
     image: 'https://c.animaapp.com/mp18tsxfgJ0g8r/img/image-2.png',
-    wheelImage:
-      'https://c.animaapp.com/mp18tsxfgJ0g8r/img/magnific-create-a-3d-restaurant-sp-2916037334-2-1.png',
     cta: 'Spin the Experience wheel',
-    subtitle: 'Something you\'ll remember',
+    subtitle: "Something you'll remember",
+    result: {
+      label: 'YOUR PICK',
+      title: 'Canvas Painting Session',
+      description: '90-Min Guided Session. Paints, Brushes, 12×16" Canvas.',
+      priceText: 'Rs 3,500',
+      image: 'https://c.animaapp.com/mp18tsxfgJ0g8r/img/image-2.png',
+    },
   },
 ];
 
 export function SpinContent() {
-  const { t, isTablet } = useResponsive();
+  const { t } = useResponsive();
+  const addItem = useTrayStore((s) => s.addItem);
   const [selected, setSelected] = useState(WHEEL_OPTIONS[0]);
+  const [showResult, setShowResult] = useState(false);
 
   const wheelSize = t(313, 260);
+
+  function handleSpin() {
+    setShowResult(true);
+  }
+
+  function handleSpinAgain() {
+    setShowResult(false);
+  }
+
+  function handleCategoryChange(option: typeof WHEEL_OPTIONS[0]) {
+    setSelected(option);
+    setShowResult(false);
+  }
 
   return (
     <View style={{ alignItems: 'center', gap: t(0, 0) }}>
@@ -46,7 +78,7 @@ export function SpinContent() {
         <Text
           style={{
             fontFamily: 'Montserrat_400Regular',
-            fontSize: t(14.5, 12),
+            fontSize: t(17, 14),
             color: '#1e0736',
           }}
         >
@@ -55,8 +87,8 @@ export function SpinContent() {
         <Text
           style={{
             fontFamily: 'PlayfairDisplay_500Medium',
-            fontSize: t(44, 30),
-            lineHeight: t(48, 34),
+            fontSize: t(54, 34),
+            lineHeight: t(58, 38),
             color: '#1e0736',
           }}
         >
@@ -68,11 +100,11 @@ export function SpinContent() {
       <Text
         style={{
           fontFamily: 'Montserrat_400Regular',
-          fontSize: t(14.5, 12),
+          fontSize: t(16, 13),
           color: '#1e0736',
           opacity: 0.7,
           textAlign: 'center',
-          lineHeight: t(22, 18),
+          lineHeight: t(24, 20),
           marginTop: t(20, 14),
         }}
       >
@@ -95,13 +127,13 @@ export function SpinContent() {
             <TouchableOpacity
               key={option.id}
               activeOpacity={0.8}
-              onPress={() => setSelected(option)}
+              onPress={() => handleCategoryChange(option)}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 gap: t(6, 4),
                 borderRadius: t(41, 32),
-                borderWidth: t(1.5, 1.5),
+                borderWidth: 1.5,
                 borderColor: isActive ? '#1e0736' : 'transparent',
                 backgroundColor: '#ffffff',
                 paddingHorizontal: t(14, 10),
@@ -121,9 +153,9 @@ export function SpinContent() {
               <Text
                 style={{
                   fontFamily: 'Montserrat_500Medium',
-                  fontSize: t(10.5, 9),
+                  fontSize: t(12, 10.5),
                   color: '#1e0736',
-                  lineHeight: t(15, 13),
+                  lineHeight: t(16, 14),
                 }}
               >
                 {option.label}
@@ -134,19 +166,12 @@ export function SpinContent() {
       </View>
 
       {/* Wheel image */}
-      <Image
-        source={{ uri: selected.wheelImage }}
-        style={{
-          width: wheelSize,
-          height: wheelSize,
-          marginTop: t(28, 20),
-        }}
-        resizeMode="contain"
-      />
+      <Image source={require('@/public/spin-wheel/wheel.png')} style={{ width: wheelSize, height: wheelSize, marginTop: t(28, 20) }} resizeMode="contain" />
 
       {/* CTA button */}
       <TouchableOpacity
         activeOpacity={0.85}
+        onPress={handleSpin}
         style={{
           borderRadius: t(70, 50),
           backgroundColor: '#775596',
@@ -162,7 +187,7 @@ export function SpinContent() {
         <Text
           style={{
             fontFamily: 'Inter_500Medium',
-            fontSize: t(14, 12),
+            fontSize: t(16, 13),
             color: '#ffffff',
           }}
         >
@@ -171,16 +196,41 @@ export function SpinContent() {
       </TouchableOpacity>
 
       {/* Subtitle text */}
-      <Text
-        style={{
-          fontFamily: 'Inter_500Medium',
-          fontSize: t(14, 12),
-          color: '#1e0736',
-          marginTop: t(20, 14),
-        }}
-      >
-        {selected.subtitle}
-      </Text>
+      {!showResult && (
+        <Text
+          style={{
+            fontFamily: 'Inter_500Medium',
+            fontSize: t(16, 13),
+            color: '#1e0736',
+            marginTop: t(20, 14),
+          }}
+        >
+          {selected.subtitle}
+        </Text>
+      )}
+
+      {/* Result card — appears after spin */}
+      {showResult && (
+        <View style={{ width: '100%', marginTop: t(20, 16) }}>
+          <SpinResultCard
+            label={selected.result.label}
+            title={selected.result.title}
+            description={selected.result.description}
+            priceText={selected.result.priceText}
+            image={selected.result.image}
+            onSpinAgain={handleSpinAgain}
+            onAddToTray={() => {
+              addItem({
+                id: `spin-${selected.id}`,
+                name: selected.result.title,
+                price: selected.result.priceText,
+                image: selected.result.image,
+                category: 'spin',
+              });
+            }}
+          />
+        </View>
+      )}
     </View>
   );
 }

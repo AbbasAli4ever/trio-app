@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '@/hooks';
+import { useTrayStore } from '@/store';
 
 const CATEGORIES = ['All', 'Single', 'Small', 'Medium', 'Large'];
 
@@ -54,6 +55,7 @@ const FLOWERS = [
 export function FlowerListing() {
   const { width, t, isTablet } = useResponsive();
   const [activeCategory, setActiveCategory] = useState('All');
+  const addItem = useTrayStore((s) => s.addItem);
 
   const cols = isTablet ? 3 : width >= 480 ? 2 : 1;
   const gap = t(16, 12);
@@ -180,6 +182,7 @@ export function FlowerListing() {
               </Text>
               <TouchableOpacity
                 activeOpacity={0.85}
+                onPress={() => addItem({ id: flower.id, name: flower.title, price: flower.price, image: flower.image, category: 'flower' })}
                 style={{
                   flex: 1,
                   backgroundColor: '#775596',

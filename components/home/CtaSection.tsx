@@ -1,4 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 import { useResponsive } from '@/hooks';
@@ -6,12 +7,13 @@ import { CTA_BOUQUET, CTA_SPIN } from '@/constants/homeData';
 
 export function CtaSection() {
   const { t } = useResponsive();
+  const router = useRouter();
   const cardHeight = t(153, 120);
 
   return (
     <View style={{ flexDirection: 'row', gap: t(16, 10) }}>
       {/* Spin CTA */}
-      <TouchableOpacity activeOpacity={0.85} style={{ flex: 1 }}>
+      <TouchableOpacity activeOpacity={0.85} style={{ flex: 1 }} onPress={() => router.push('/spin-wheel')}>
         <LinearGradient
           colors={['#775596', '#c66def']}
           start={{ x: 0, y: 0 }}
@@ -44,7 +46,7 @@ export function CtaSection() {
             }}
           />
           <Image
-            source={{ uri: CTA_SPIN.image }}
+            source={CTA_SPIN.image}
             style={{ width: t(110, 80), height: t(110, 80), marginTop: -5, marginBottom: -5 }}
             resizeMode="contain"
           />
@@ -67,6 +69,7 @@ export function CtaSection() {
       {/* Bouquet Builder CTA */}
       <TouchableOpacity
         activeOpacity={0.85}
+        onPress={() => router.push('/build-bouquet')}
         style={{
           flex: 1,
           height: cardHeight,
@@ -91,11 +94,11 @@ export function CtaSection() {
             backgroundColor: '#fbebf0',
             alignItems: 'center',
             justifyContent: 'center',
-            overflow: 'hidden',
+            
           }}
         >
           <Image
-            source={{ uri: CTA_BOUQUET.image }}
+            source={CTA_BOUQUET.image}
             style={{ width: t(70, 50), height: t(78, 56) }}
             resizeMode="contain"
           />

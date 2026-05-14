@@ -54,6 +54,9 @@
       ],
       "@/assets/*": [
         "./assets/*"
+      ],
+      "@/public/*": [
+        "./public/*"
       ]
     }
   },

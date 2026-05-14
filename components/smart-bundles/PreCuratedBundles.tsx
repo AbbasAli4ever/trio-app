@@ -34,7 +34,7 @@ function BundleCardItem({
       {/* Left: image + SAVE badge */}
       <View style={{ width: imgSize, flexShrink: 0 }}>
         <Image
-          source={{ uri: bundle.image }}
+          source={bundle.image}
           style={{ width: imgSize, height: '100%', minHeight: t(192, 150) }}
           resizeMode="cover"
         />

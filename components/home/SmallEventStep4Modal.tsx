@@ -1,29 +1,47 @@
-import { useState } from 'react';
-import { Modal, Pressable, Text, TouchableOpacity, View, Image } from 'react-native';
+
+import { Image, Modal, Pressable, Text, TouchableOpacity, View } from 'react-native';
+function PkgImg({ src, w, h }: { src: any; w: number; h: number }) {
+  return <Image source={src} style={{ width: w, height: h, flexShrink: 0 }} resizeMode="contain" />;
+}
 import { useResponsive } from '@/hooks';
 
-const ADD_ONS = [
-  { name: 'Polaroid camera + film', price: '+ Rs 2,500' },
-  { name: 'Personalised signage', price: '+ Rs 1,800' },
-  { name: '1-hour DJ set', price: '+ Rs 8,000' },
-  { name: 'Photographer · 1 hour', price: '+ Rs 6,000' },
-  { name: 'Welcome gift bags', price: '+ Rs 600' },
+export const EXTRAS_ADD_ONS = [
+  { id: 'polaroid-camera', name: 'Polaroid camera + film', price: 2500 },
+  { id: 'personalised-signage', name: 'Personalised signage', price: 1800 },
+  { id: 'dj-set', name: '1-hour DJ set', price: 8000 },
+  { id: 'photographer', name: 'Photographer · 1 hour', price: 6000 },
+  { id: 'gift-bags', name: 'Welcome gift bags', price: 600 },
 ];
+
+function fmt(n: number) {
+  return 'Rs ' + n.toLocaleString('en-PK');
+}
 
 type Props = {
   visible: boolean;
   onClose: () => void;
   onBack: () => void;
   onNext: () => void;
+  packageTitle: string;
+  packageImage: any;
+  selectedExtras: string[];
+  onExtrasChange: (ids: string[]) => void;
+  runningTotal: number;
 };
 
-export function SmallEventStep4Modal({ visible, onClose, onBack, onNext }: Props) {
+export function SmallEventStep4Modal({
+  visible, onClose, onBack, onNext,
+  packageTitle, packageImage,
+  selectedExtras, onExtrasChange,
+  runningTotal,
+}: Props) {
   const { t } = useResponsive();
-  const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
 
-  function toggleAddOn(name: string) {
-    setSelectedAddOns((prev) =>
-      prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
+  function toggleExtra(id: string) {
+    onExtrasChange(
+      selectedExtras.includes(id)
+        ? selectedExtras.filter((e) => e !== id)
+        : [...selectedExtras, id]
     );
   }
 
@@ -59,53 +77,29 @@ export function SmallEventStep4Modal({ visible, onClose, onBack, onNext }: Props
               paddingBottom: t(20, 16),
             }}
           >
-            {/* Close */}
             <TouchableOpacity
               onPress={onClose}
               activeOpacity={0.8}
-              style={{
-                position: 'absolute',
-                top: t(14, 12),
-                right: t(16, 14),
-                zIndex: 10,
-                width: t(24, 20),
-                height: t(24, 20),
-                borderRadius: t(4, 3),
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
+              style={{ position: 'absolute', top: t(14, 12), right: t(16, 14), zIndex: 10, width: t(24, 20), height: t(24, 20), borderRadius: t(4, 3), alignItems: 'center', justifyContent: 'center' }}
             >
               <Text style={{ fontSize: t(16, 13), color: '#444444' }}>✕</Text>
             </TouchableOpacity>
 
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: t(16, 12), paddingRight: t(32, 24) }}>
-              <Image
-                source={{ uri: 'https://c.animaapp.com/mp13qtn823bRPq/img/birhtday-1-7.png' }}
-                style={{ width: t(73, 54), height: t(67, 50), flexShrink: 0 }}
-                resizeMode="contain"
-              />
+              <PkgImg src={packageImage} w={t(73, 54)} h={t(67, 50)} />
               <View style={{ flex: 1 }}>
                 <Text style={{ fontFamily: 'Montserrat_500Medium', fontSize: t(14, 11), lineHeight: t(19.6, 15), color: '#1e0736', opacity: 0.7 }}>
                   Step 4 Of 5
                 </Text>
                 <Text style={{ fontFamily: 'PlayfairDisplay_500Medium', fontSize: t(21, 17), lineHeight: t(24, 20), color: '#1e0736' }}>
-                  Small Event Package
+                  {packageTitle}
                 </Text>
               </View>
             </View>
 
-            {/* Progress bar */}
             <View style={{ flexDirection: 'row', gap: t(12, 8), marginTop: t(24, 18) }}>
               {[0, 1, 2, 3, 4].map((i) => (
-                <View
-                  key={i}
-                  style={{
-                    flex: 1,
-                    height: t(6, 5),
-                    borderRadius: 30,
-                    backgroundColor: i <= 3 ? '#775596' : 'rgba(110,110,110,0.22)',
-                  }}
-                />
+                <View key={i} style={{ flex: 1, height: t(6, 5), borderRadius: 30, backgroundColor: i <= 3 ? '#775596' : 'rgba(110,110,110,0.22)' }} />
               ))}
             </View>
           </View>
@@ -116,12 +110,12 @@ export function SmallEventStep4Modal({ visible, onClose, onBack, onNext }: Props
               Make it really special (optional)
             </Text>
             <View style={{ gap: t(8, 6) }}>
-              {ADD_ONS.map((item) => {
-                const isSelected = selectedAddOns.includes(item.name);
+              {EXTRAS_ADD_ONS.map((item) => {
+                const isSelected = selectedExtras.includes(item.id);
                 return (
                   <TouchableOpacity
-                    key={item.name}
-                    onPress={() => toggleAddOn(item.name)}
+                    key={item.id}
+                    onPress={() => toggleExtra(item.id)}
                     activeOpacity={0.8}
                     style={{
                       flexDirection: 'row',
@@ -139,7 +133,7 @@ export function SmallEventStep4Modal({ visible, onClose, onBack, onNext }: Props
                       {item.name}
                     </Text>
                     <Text style={{ fontFamily: 'Montserrat_500Medium', fontSize: t(15, 12), color: '#1e1e1e', textAlign: 'right' }}>
-                      {item.price}
+                      + {fmt(item.price)}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -147,7 +141,6 @@ export function SmallEventStep4Modal({ visible, onClose, onBack, onNext }: Props
             </View>
           </View>
 
-          {/* Separator */}
           <View style={{ height: 1, backgroundColor: 'rgba(110,110,110,0.2)' }} />
 
           {/* Footer */}
@@ -155,40 +148,20 @@ export function SmallEventStep4Modal({ visible, onClose, onBack, onNext }: Props
             <TouchableOpacity
               onPress={onBack}
               activeOpacity={0.8}
-              style={{
-                height: t(48, 40),
-                paddingHorizontal: t(16, 14),
-                borderRadius: t(10, 8),
-                borderWidth: 1,
-                borderColor: '#9a9a9a',
-                backgroundColor: '#ffffff',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: t(4, 3),
-              }}
+              style={{ height: t(48, 40), paddingHorizontal: t(16, 14), borderRadius: t(10, 8), borderWidth: 1, borderColor: '#9a9a9a', backgroundColor: '#ffffff', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: t(4, 3) }}
             >
               <Text style={{ fontSize: t(15, 12), color: '#000000' }}>←</Text>
               <Text style={{ fontFamily: 'Inter_500Medium', fontSize: t(16, 13), color: '#000000' }}>Back</Text>
             </TouchableOpacity>
 
             <Text style={{ flex: 1, fontFamily: 'BebasNeue_400Regular', fontSize: t(24, 18), color: '#370c64', textAlign: 'center' }}>
-              Rs 26,500
+              {fmt(runningTotal)}
             </Text>
 
             <TouchableOpacity
               onPress={onNext}
               activeOpacity={0.85}
-              style={{
-                height: t(48, 40),
-                paddingHorizontal: t(16, 14),
-                borderRadius: t(10, 8),
-                backgroundColor: '#775596',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: t(6, 4),
-              }}
+              style={{ height: t(48, 40), paddingHorizontal: t(16, 14), borderRadius: t(10, 8), backgroundColor: '#775596', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: t(6, 4) }}
             >
               <Text style={{ fontFamily: 'Inter_500Medium', fontSize: t(16, 13), color: '#ffffff' }}>Next</Text>
               <Text style={{ fontSize: t(17, 14), color: '#ffffff' }}>→</Text>

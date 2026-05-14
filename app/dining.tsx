@@ -11,7 +11,7 @@ export default function DiningScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f7f6f7' }} edges={['top', 'bottom']}>
       <ScrollView
         contentContainerStyle={{
-          paddingBottom: t(48, 32),
+          paddingBottom: t(140, 110),
           paddingHorizontal: t(24, 16),
           gap: t(24, 18),
         }}

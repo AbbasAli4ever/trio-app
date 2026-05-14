@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '@/hooks';
+import { useTrayStore } from '@/store';
+import { DECOR_PACKAGES } from './PackageGallery';
 
 const BROWSE_OPTIONS = [
   { id: 'default', label: 'Default', swatches: ['#f9dcd7', '#d4595c', '#9e272b'], lastHasBorder: false },
@@ -21,20 +23,22 @@ const FLOWER_OPTIONS = [
 ];
 
 const FINISHING_OPTIONS = [
-  { id: 'f-red-roses', label: 'Red Roses', image: 'https://c.animaapp.com/moybk94uF21O9Y/img/image-1-1.png' },
-  { id: 'f-white-roses', label: 'White Roses', image: 'https://c.animaapp.com/moybk94uF21O9Y/img/image-2-1.png' },
-  { id: 'f-pink-roses', label: 'Pink Roses', image: 'https://c.animaapp.com/moybk94uF21O9Y/img/image-5-1.png' },
-  { id: 'f-tulips', label: 'Tulips', image: 'https://c.animaapp.com/moybk94uF21O9Y/img/image-6-1.png' },
-  { id: 'f-babys-breath', label: "Baby's Breath", image: 'https://c.animaapp.com/moybk94uF21O9Y/img/image-7-2.png' },
-  { id: 'f-lavender-1', label: 'Lavender Sprays', image: 'https://c.animaapp.com/moybk94uF21O9Y/img/image-8-1.png' },
-  { id: 'f-lavender-2', label: 'Lavender Sprays', image: 'https://c.animaapp.com/moybk94uF21O9Y/img/image-7-2.png' },
+  { id: 'f-red-roses', label: 'Red Roses', price: 500, image: 'https://c.animaapp.com/moybk94uF21O9Y/img/image-1-1.png' },
+  { id: 'f-white-roses', label: 'White Roses', price: 500, image: 'https://c.animaapp.com/moybk94uF21O9Y/img/image-2-1.png' },
+  { id: 'f-pink-roses', label: 'Pink Roses', price: 500, image: 'https://c.animaapp.com/moybk94uF21O9Y/img/image-5-1.png' },
+  { id: 'f-tulips', label: 'Tulips', price: 500, image: 'https://c.animaapp.com/moybk94uF21O9Y/img/image-6-1.png' },
+  { id: 'f-babys-breath', label: "Baby's Breath", price: 500, image: 'https://c.animaapp.com/moybk94uF21O9Y/img/image-7-2.png' },
+  { id: 'f-lavender-1', label: 'Lavender Sprays', price: 500, image: 'https://c.animaapp.com/moybk94uF21O9Y/img/image-8-1.png' },
+  { id: 'f-lavender-2', label: 'Lavender Sprays', price: 500, image: 'https://c.animaapp.com/moybk94uF21O9Y/img/image-7-2.png' },
 ];
 
 const ADD_ONS = [
-  { id: 'balloon-arch', label: 'Balloon Arch', price: '+Rs 3,500', image: 'https://c.animaapp.com/moybk94uF21O9Y/img/magnific-create-a-realistic-balloo-2917545837-1.png' },
-  { id: 'fairy-light', label: 'Fairy Light Wall', price: '+Rs 2,500', image: 'https://c.animaapp.com/moybk94uF21O9Y/img/magnific-create-a-realistic-balloo-2917545837-1-1.png' },
-  { id: 'neon-sign', label: 'Custom Neon Sign', price: '+Rs 6,000', image: 'https://c.animaapp.com/moybk94uF21O9Y/img/magnific-create-a-realistic-balloo-2917545837-1-2.png' },
+  { id: 'balloon-arch', label: 'Balloon Arch', price: 3500, priceLabel: '+Rs 3,500', image: 'https://c.animaapp.com/moybk94uF21O9Y/img/magnific-create-a-realistic-balloo-2917545837-1.png' },
+  { id: 'fairy-light', label: 'Fairy Light Wall', price: 2500, priceLabel: '+Rs 2,500', image: 'https://c.animaapp.com/moybk94uF21O9Y/img/magnific-create-a-realistic-balloo-2917545837-1-1.png' },
+  { id: 'neon-sign', label: 'Custom Neon Sign', price: 6000, priceLabel: '+Rs 6,000', image: 'https://c.animaapp.com/moybk94uF21O9Y/img/magnific-create-a-realistic-balloo-2917545837-1-2.png' },
 ];
+
+const MAX_FINISHING = 3;
 
 function SectionTitle({ label, t }: { label: string; t: (a: number, b?: number) => number }) {
   return (
@@ -80,13 +84,62 @@ function PillButton({ label, isActive, onPress, left, t }: {
   );
 }
 
-export function PackageCustomizer() {
+type Props = {
+  selectedPackageId: string;
+};
+
+export function PackageCustomizer({ selectedPackageId }: Props) {
   const { t } = useResponsive();
+  const addItem = useTrayStore((s) => s.addItem);
 
   const [selectedBrowse, setSelectedBrowse] = useState('default');
   const [selectedFlower, setSelectedFlower] = useState('pink-roses');
-  const [selectedFinishing, setSelectedFinishing] = useState('f-pink-roses');
+  const [selectedFinishing, setSelectedFinishing] = useState<string[]>([]);
   const [selectedAddon, setSelectedAddon] = useState('balloon-arch');
+
+  const pkg = DECOR_PACKAGES.find((p) => p.id === selectedPackageId) ?? DECOR_PACKAGES[0];
+  const addon = ADD_ONS.find((a) => a.id === selectedAddon)!;
+  const finishingTotal = selectedFinishing.reduce((sum, id) => {
+    const f = FINISHING_OPTIONS.find((o) => o.id === id);
+    return sum + (f?.price ?? 0);
+  }, 0);
+  const total = pkg.price + addon.price + finishingTotal;
+  const totalLabel = `Rs ${total.toLocaleString('en-PK')}`;
+
+  function toggleFinishing(id: string) {
+    setSelectedFinishing((prev) => {
+      if (prev.includes(id)) return prev.filter((x) => x !== id);
+      if (prev.length >= MAX_FINISHING) return prev;
+      return [...prev, id];
+    });
+  }
+
+  function handleAddToTray() {
+    const browse = BROWSE_OPTIONS.find((o) => o.id === selectedBrowse)!;
+    const flower = FLOWER_OPTIONS.find((o) => o.id === selectedFlower)!;
+    const finishing = selectedFinishing.map((id) => FINISHING_OPTIONS.find((o) => o.id === id)!.label);
+
+    addItem({
+      id: `decor-${selectedPackageId}-${selectedBrowse}-${selectedAddon}`,
+      name: pkg.title,
+      price: totalLabel,
+      image: pkg.image,
+      category: 'decor',
+      meta: {
+        package: pkg.title,
+        palette: browse.label,
+        flower: flower.label,
+        finishingTouches: finishing,
+        addon: addon.label,
+        breakdown: {
+          packageBase: pkg.price,
+          addonPrice: addon.price,
+          finishingTotal,
+          total,
+        },
+      },
+    });
+  }
 
   return (
     <View style={{ gap: t(32, 24) }}>
@@ -104,10 +157,10 @@ export function PackageCustomizer() {
       >
         <View style={{ padding: t(24, 18), gap: t(32, 24) }}>
 
-          {/* Live Preview image */}
+          {/* Live Preview */}
           <View style={{ borderRadius: t(16, 12), overflow: 'hidden', height: t(543, 260) }}>
             <Image
-              source={{ uri: 'https://c.animaapp.com/moybk94uF21O9Y/img/hero-section-1.png' }}
+              source={{ uri: pkg.image }}
               style={{ width: '100%', height: '100%' }}
               resizeMode="cover"
             />
@@ -116,10 +169,6 @@ export function PackageCustomizer() {
                 position: 'absolute',
                 bottom: t(24, 16),
                 right: t(24, 16),
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: t(4, 3),
                 borderRadius: t(54, 40),
                 borderWidth: t(1.96, 1.5),
                 borderColor: '#ffffff',
@@ -134,10 +183,20 @@ export function PackageCustomizer() {
             </View>
           </View>
 
-          {/* Browse */}
+          {/* Selected package label */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Text style={{ fontFamily: 'PlayfairDisplay_500Medium', fontSize: t(18, 14), color: '#1e0736', flex: 1 }}>
+              {pkg.title}
+            </Text>
+            <Text style={{ fontFamily: 'BebasNeue_400Regular', fontSize: t(20, 15), color: '#370c64' }}>
+              {pkg.priceLabel}
+            </Text>
+          </View>
+
+          {/* Browse palette */}
           <View style={{ gap: t(20, 14) }}>
             <SectionTitle label="Browse" t={t} />
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: t(16, 10), flexDirection: 'row', flexWrap: 'wrap' }}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: t(16, 10), flexDirection: 'row' }}>
               {BROWSE_OPTIONS.map((opt) => (
                 <PillButton
                   key={opt.id}
@@ -170,69 +229,63 @@ export function PackageCustomizer() {
 
           {/* Flowers */}
           <View style={{ gap: t(20, 14) }}>
-            <SectionTitle label="Flowers- Pick Any" t={t} />
-            <View style={{ gap: t(16, 10) }}>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: t(16, 10) }}>
-                {FLOWER_OPTIONS.slice(0, 5).map((flower) => (
-                  <PillButton
-                    key={flower.id}
-                    label={flower.label}
-                    isActive={selectedFlower === flower.id}
-                    onPress={() => setSelectedFlower(flower.id)}
-                    t={t}
-                    left={<Image source={{ uri: flower.image }} style={{ width: t(28, 22), height: t(28, 22) }} resizeMode="cover" />}
-                  />
-                ))}
-              </View>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: t(16, 10) }}>
-                {FLOWER_OPTIONS.slice(5).map((flower) => (
-                  <PillButton
-                    key={flower.id}
-                    label={flower.label}
-                    isActive={selectedFlower === flower.id}
-                    onPress={() => setSelectedFlower(flower.id)}
-                    t={t}
-                    left={<Image source={{ uri: flower.image }} style={{ width: t(28, 22), height: t(28, 22) }} resizeMode="cover" />}
-                  />
-                ))}
-              </View>
+            <SectionTitle label="Flowers — Pick Any" t={t} />
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: t(16, 10) }}>
+              {FLOWER_OPTIONS.map((flower) => (
+                <PillButton
+                  key={flower.id}
+                  label={flower.label}
+                  isActive={selectedFlower === flower.id}
+                  onPress={() => setSelectedFlower(flower.id)}
+                  t={t}
+                  left={<Image source={{ uri: flower.image }} style={{ width: t(28, 22), height: t(28, 22) }} resizeMode="cover" />}
+                />
+              ))}
             </View>
           </View>
 
-          {/* Finishing Touches */}
+          {/* Finishing Touches — multi-select up to 3 */}
           <View style={{ gap: t(20, 14) }}>
-            <SectionTitle label="Finishing Touches" t={t} />
-            <View style={{ gap: t(16, 10) }}>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: t(16, 10) }}>
-                {FINISHING_OPTIONS.slice(0, 5).map((item) => (
-                  <PillButton
-                    key={item.id}
-                    label={item.label}
-                    isActive={selectedFinishing === item.id}
-                    onPress={() => setSelectedFinishing(item.id)}
-                    t={t}
-                    left={<Image source={{ uri: item.image }} style={{ width: t(28, 22), height: t(28, 22) }} resizeMode="cover" />}
-                  />
-                ))}
-              </View>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: t(16, 10) }}>
-                {FINISHING_OPTIONS.slice(5).map((item) => (
-                  <PillButton
-                    key={item.id}
-                    label={item.label}
-                    isActive={selectedFinishing === item.id}
-                    onPress={() => setSelectedFinishing(item.id)}
-                    t={t}
-                    left={<Image source={{ uri: item.image }} style={{ width: t(28, 22), height: t(28, 22) }} resizeMode="cover" />}
-                  />
-                ))}
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: t(8, 6) }}>
+              <SectionTitle label="Finishing Touches" t={t} />
+              <View style={{ backgroundColor: '#f2edfb', borderRadius: t(12, 8), paddingHorizontal: t(8, 6), paddingVertical: t(2, 1) }}>
+                <Text style={{ fontFamily: 'Montserrat_500Medium', fontSize: t(11, 9), color: '#775596' }}>
+                  {selectedFinishing.length}/{MAX_FINISHING}
+                </Text>
               </View>
             </View>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: t(16, 10) }}>
+              {FINISHING_OPTIONS.map((item) => {
+                const isActive = selectedFinishing.includes(item.id);
+                const isDisabled = !isActive && selectedFinishing.length >= MAX_FINISHING;
+                return (
+                  <PillButton
+                    key={item.id}
+                    label={item.label}
+                    isActive={isActive}
+                    onPress={() => !isDisabled && toggleFinishing(item.id)}
+                    t={t}
+                    left={
+                      <Image
+                        source={{ uri: item.image }}
+                        style={{ width: t(28, 22), height: t(28, 22), opacity: isDisabled ? 0.4 : 1 }}
+                        resizeMode="cover"
+                      />
+                    }
+                  />
+                );
+              })}
+            </View>
+            {finishingTotal > 0 && (
+              <Text style={{ fontFamily: 'Montserrat_500Medium', fontSize: t(12, 10), color: '#775596' }}>
+                +Rs {finishingTotal.toLocaleString('en-PK')} for finishing touches
+              </Text>
+            )}
           </View>
 
           {/* Add-ons */}
           <View style={{ gap: t(20, 14) }}>
-            <SectionTitle label="Finishing Touches" t={t} />
+            <SectionTitle label="Add-Ons" t={t} />
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: t(16, 12) }}>
               {ADD_ONS.map((addon) => {
                 const isActive = selectedAddon === addon.id;
@@ -250,8 +303,8 @@ export function PackageCustomizer() {
                       padding: t(16, 12),
                       borderRadius: t(16, 12),
                       backgroundColor: '#ffffff',
-                      borderWidth: 1,
-                      borderColor: isActive ? '#1d0636' : 'transparent',
+                      borderWidth: 1.5,
+                      borderColor: isActive ? '#1e0736' : 'transparent',
                       shadowColor: '#000',
                       shadowOffset: { width: 0, height: 4.37 },
                       shadowOpacity: isActive ? 0 : 0.05,
@@ -271,7 +324,7 @@ export function PackageCustomizer() {
                             {addon.label}
                           </Text>
                           <Text style={{ fontFamily: 'BebasNeue_400Regular', fontSize: t(20, 14), color: '#370c64' }}>
-                            {addon.price}
+                            {addon.priceLabel}
                           </Text>
                         </View>
                         <View
@@ -282,8 +335,12 @@ export function PackageCustomizer() {
                             borderWidth: 2,
                             borderColor: '#1d0636',
                             backgroundColor: isActive ? '#1d0636' : 'transparent',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                           }}
-                        />
+                        >
+                          {isActive && <Text style={{ color: '#ffffff', fontSize: t(10, 8), lineHeight: t(12, 10) }}>✓</Text>}
+                        </View>
                       </View>
                     </View>
                   </TouchableOpacity>
@@ -304,30 +361,30 @@ export function PackageCustomizer() {
               padding: t(32, 20),
             }}
           >
-            <View style={{ flex: 1, gap: t(8, 6) }}>
-              <Text style={{ fontFamily: 'Montserrat_500Medium', fontSize: t(16, 13), color: '#1e0736' }}>
+            <View style={{ flex: 1, gap: t(4, 3) }}>
+              <Text style={{ fontFamily: 'Montserrat_500Medium', fontSize: t(13, 11), color: '#775596' }}>
                 Total
               </Text>
-              <Text style={{ fontFamily: 'BebasNeue_400Regular', fontSize: t(20, 15), color: '#370c64' }}>
-                Rs 15,000
+              <Text style={{ fontFamily: 'BebasNeue_400Regular', fontSize: t(28, 20), color: '#370c64' }}>
+                {totalLabel}
               </Text>
             </View>
             <TouchableOpacity
               activeOpacity={0.88}
+              onPress={handleAddToTray}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 gap: t(8, 6),
                 backgroundColor: '#775596',
-                borderRadius: t(10, 8),
-                paddingHorizontal: t(16, 12),
-                paddingVertical: t(10, 8),
+                borderRadius: t(70, 50),
+                paddingHorizontal: t(20, 14),
+                paddingVertical: t(12, 9),
               }}
             >
               <Text style={{ fontFamily: 'Inter_500Medium', fontSize: t(16, 13), color: '#ffffff' }}>
-                Add to tray
+                🛍 Add to Tray
               </Text>
-              <Text style={{ fontSize: t(17.5, 14), color: '#ffffff' }}>→</Text>
             </TouchableOpacity>
           </View>
 

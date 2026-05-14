@@ -1,12 +1,36 @@
-import { useState } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import type { ImageSourcePropType } from 'react-native';
+import { useRouter, useSegments } from 'expo-router';
 
 import { useResponsive } from '@/hooks';
 import { NAV_OPTIONS } from '@/constants/homeData';
+import { useTrayStore } from '@/store';
+
+// Last segment → nav id
+const SEGMENT_TO_ID: Record<string, string> = {
+  home: 'home',
+  dining: 'dining',
+  beverages: 'drinks',
+  flowers: 'flowers',
+  cinema: 'cinema',
+  'hi-tea': 'hi-tea',
+  'smart-bundles': 'bundles',
+};
+
+// Nav id → tab screen name (segment)
+const ID_TO_SEGMENT: Record<string, string> = {
+  home: 'home',
+  dining: 'dining',
+  drinks: 'beverages',
+  flowers: 'flowers',
+  cinema: 'cinema',
+  'hi-tea': 'hi-tea',
+  bundles: 'smart-bundles',
+};
 
 type NavItemProps = {
   label: string;
-  imageSrc: string | null;
+  imageSrc: ImageSourcePropType | null;
   isActive: boolean;
   t: (a: number, b?: number) => number;
   fontSize: number;
@@ -34,7 +58,7 @@ function NavItem({ label, imageSrc, isActive, t, fontSize, onPress }: NavItemPro
           gap: 4,
         }}
       >
-        {imageSrc && <Image source={{ uri: imageSrc }} style={{ width: imgSize, height: imgSize }} resizeMode="cover" />}
+        {imageSrc && <Image source={imageSrc} style={{ width: imgSize, height: imgSize }} resizeMode="cover" />}
         <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize, lineHeight: fontSize * 1.4, color: '#ffffff' }}>
           {label}
         </Text>
@@ -64,7 +88,7 @@ function NavItem({ label, imageSrc, isActive, t, fontSize, onPress }: NavItemPro
         elevation: 2,
       }}
     >
-      {imageSrc && <Image source={{ uri: imageSrc }} style={{ width: imgSize, height: imgSize }} resizeMode="cover" />}
+      {imageSrc && <Image source={imageSrc} style={{ width: imgSize, height: imgSize }} resizeMode="cover" />}
       <Text style={{ fontFamily: 'Montserrat_500Medium', fontSize, lineHeight: fontSize * 1.4, color: '#1e0736' }}>
         {label}
       </Text>
@@ -74,8 +98,15 @@ function NavItem({ label, imageSrc, isActive, t, fontSize, onPress }: NavItemPro
 
 export function Navbar() {
   const { t } = useResponsive();
-  const [activeId, setActiveId] = useState('home');
+  const router = useRouter();
+  const segments = useSegments();
   const fontSize = t(17.23, 12);
+  const { items, openTray } = useTrayStore();
+  const totalQty = items.reduce((sum, i) => sum + i.quantity, 0);
+
+  // Last segment is the screen name, e.g. ['(tabs)', 'dining'] → 'dining'
+  const lastSegment = segments[segments.length - 1] ?? 'home';
+  const activeId = SEGMENT_TO_ID[lastSegment] ?? 'home';
 
   return (
     <View
@@ -101,11 +132,13 @@ export function Navbar() {
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{
+            flexGrow: 1,
             paddingHorizontal: t(9.85, 6),
             paddingVertical: t(9.85, 6),
             gap: t(8, 5),
             flexDirection: 'row',
-            alignItems: 'flex-end',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
           bounces={false}
         >
@@ -117,9 +150,49 @@ export function Navbar() {
               isActive={option.id === activeId}
               t={t}
               fontSize={fontSize}
-              onPress={() => setActiveId(option.id)}
+              onPress={() => {
+                const segment = ID_TO_SEGMENT[option.id];
+                router.replace(`/(tabs)/${segment}` as any);
+              }}
             />
           ))}
+
+          {/* Tray button */}
+          <TouchableOpacity
+            onPress={openTray}
+            activeOpacity={0.8}
+            style={{
+              width: t(44, 34),
+              height: t(44, 34),
+              borderRadius: t(22, 17),
+              backgroundColor: '#1e0736',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <Text style={{ fontSize: t(18, 14) }}>🛍</Text>
+            {totalQty > 0 && (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: -2,
+                  right: -2,
+                  backgroundColor: '#775596',
+                  borderRadius: 10,
+                  minWidth: t(18, 15),
+                  height: t(18, 15),
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingHorizontal: 3,
+                }}
+              >
+                <Text style={{ fontFamily: 'Montserrat_700Bold', fontSize: t(9, 8), color: '#ffffff', lineHeight: t(11, 10) }}>
+                  {totalQty > 99 ? '99+' : totalQty}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
         </ScrollView>
       </View>
     </View>

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '@/hooks';
 
@@ -10,9 +9,13 @@ const SHOWTIMES = [
   { time: '8:00 PM', availability: '5/25 Left', seats: 5 },
 ];
 
-export function ShowtimeSelection() {
+type Props = {
+  selected: string | null;
+  onSelect: (time: string) => void;
+};
+
+export function ShowtimeSelection({ selected, onSelect }: Props) {
   const { t, width, isTablet } = useResponsive();
-  const [selected, setSelected] = useState<string | null>('3:00 PM');
 
   const hPad = isTablet ? t(48, 32) : 32;
   const cols = isTablet ? 3 : 2;
@@ -35,7 +38,7 @@ export function ShowtimeSelection() {
             <TouchableOpacity
               key={slot.time}
               activeOpacity={isFull ? 1 : 0.8}
-              onPress={() => { if (!isFull) setSelected(slot.time); }}
+              onPress={() => { if (!isFull) onSelect(slot.time); }}
               style={{
                 width: cardWidth,
                 borderRadius: t(16, 12),

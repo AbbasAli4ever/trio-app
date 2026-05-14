@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import { useResponsive } from '@/hooks';
 
@@ -13,7 +14,7 @@ type TrayItem = {
   id: string;
   name: string;
   price: string;
-  image: string;
+  image: any;
   quantity: number;
 };
 
@@ -21,7 +22,7 @@ const SUGGESTED = {
   id: 'hitea',
   name: 'Hi-Tea for Two + Bouquet',
   price: 'Rs 10,350',
-  image: 'https://c.animaapp.com/moya8oggHTsBan/img/rectangle-5.svg',
+  image: require('@/public/smart-bundles/card1.png'),
 };
 
 type Props = {
@@ -32,6 +33,10 @@ type Props = {
 
 export function TrayPanel({ visible, onClose, initialItems = [] }: Props) {
   const { t, width } = useResponsive();
+  const { height: screenHeight } = useWindowDimensions();
+  const navbarHeight = t(80, 70);
+  const trayMaxHeight = screenHeight * 0.6;
+  const trayBottom = navbarHeight + t(16, 12);
   const trayWidth = Math.min(t(430, 340), width * 0.92);
   const slideAnim = useRef(new Animated.Value(trayWidth)).current;
   const [items, setItems] = useState<TrayItem[]>(initialItems);
@@ -78,10 +83,10 @@ export function TrayPanel({ visible, onClose, initialItems = [] }: Props) {
       <Animated.View
         style={{
           position: 'absolute',
-          bottom: t(20, 14),
+          bottom: trayBottom,
           right: t(20, 14),
           width: trayWidth,
-          maxHeight: '80%',
+          maxHeight: trayMaxHeight,
           zIndex: 51,
           transform: [{ translateX: slideAnim }],
           backgroundColor: '#ffffff',
@@ -141,7 +146,7 @@ export function TrayPanel({ visible, onClose, initialItems = [] }: Props) {
                       flexShrink: 0,
                     }}
                   >
-                    <Image source={{ uri: item.image }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+                    <Image source={item.image} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
                   </View>
 
                   {/* Name + price */}
@@ -207,7 +212,7 @@ export function TrayPanel({ visible, onClose, initialItems = [] }: Props) {
               }}
             >
               <View style={{ width: t(50, 42), height: t(50, 42), borderRadius: t(8, 6), overflow: 'hidden', backgroundColor: '#d9d9d9', flexShrink: 0 }}>
-                <Image source={{ uri: SUGGESTED.image }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+                <Image source={SUGGESTED.image} style={{ width: t(50, 42), height: t(50, 42) }} resizeMode="cover" />
               </View>
               <View style={{ flex: 1, gap: t(8, 6) }}>
                 <Text style={{ fontFamily: 'PlayfairDisplay_500Medium', fontSize: t(14, 11), color: '#1e0736' }}>

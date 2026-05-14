@@ -1,11 +1,11 @@
-import { Image, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+import { Image } from 'react-native';
 import { useResponsive } from '@/hooks';
 
 const MENU_CATEGORIES = [
   {
     id: '1',
     title: 'Savouries',
-    image: 'https://c.animaapp.com/mp158p9uFQYlPn/img/rectangle-5.svg',
     items: [
       { text: 'Cucumber & Cream Cheese Sandwich', star: true },
       { text: 'Chicken Tikka Slider', star: false },
@@ -16,7 +16,6 @@ const MENU_CATEGORIES = [
   {
     id: '2',
     title: 'Scones',
-    image: 'https://c.animaapp.com/mp158p9uFQYlPn/img/rectangle-5.svg',
     items: [
       { text: 'Buttermilk Scone', star: true },
       { text: 'Clotted Cream', star: false },
@@ -27,7 +26,6 @@ const MENU_CATEGORIES = [
   {
     id: '3',
     title: 'Sweets',
-    image: 'https://c.animaapp.com/mp158p9uFQYlPn/img/rectangle-5.svg',
     items: [
       { text: 'Macaron of the Day', star: true },
       { text: 'Lemon Tartlet', star: false },
@@ -38,7 +36,6 @@ const MENU_CATEGORIES = [
   {
     id: '4',
     title: 'Tea Pairing',
-    image: 'https://c.animaapp.com/mp158p9uFQYlPn/img/rectangle-5.svg',
     items: [
       { text: 'Earl Grey', star: true },
       { text: 'Moroccan Mint', star: false },
@@ -96,11 +93,7 @@ export function MenuCategories() {
           </View>
 
           {/* Image */}
-          <Image
-            source={{ uri: cat.image }}
-            style={{ width: imgWidth, flexShrink: 0 }}
-            resizeMode="cover"
-          />
+          <Image source={require('@/public/hi-tea/card-img.png')} style={{ width: imgWidth, height: t(160, 120) }} resizeMode="cover" />
 
           {/* Content */}
           <View style={{ flex: 1, paddingHorizontal: t(16, 12), paddingVertical: t(12, 10), gap: t(12, 8) }}>

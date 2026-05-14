@@ -1,5 +1,6 @@
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '@/hooks';
+import { useTrayStore } from '@/store';
 
 type Activity = {
   title: string;
@@ -56,6 +57,7 @@ const ACTIVITIES: Activity[] = [
 
 export function ActivitiesCatalog() {
   const { t, width, isTablet } = useResponsive();
+  const addItem = useTrayStore((s) => s.addItem);
 
   const cols = isTablet ? 3 : 1;
   const gap = t(16, 12);
@@ -133,6 +135,7 @@ export function ActivitiesCatalog() {
             </Text>
             <TouchableOpacity
               activeOpacity={0.85}
+              onPress={() => addItem({ id: activity.title.toLowerCase().replace(/\s+/g, '-'), name: activity.title, price: activity.price, image: activity.image, category: 'activity' })}
               style={{
                 flex: 1,
                 height: t(44, 36),

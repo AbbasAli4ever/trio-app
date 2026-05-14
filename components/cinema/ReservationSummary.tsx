@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '@/hooks';
 
@@ -6,14 +5,18 @@ const TOTAL_SEATS = 25;
 const PRICE_PER_SEAT = 800;
 const TAKEN_SEATS = 3;
 
-export function ReservationSummary() {
+type Props = {
+  ticketCount: number;
+  onTicketCountChange: (count: number) => void;
+};
+
+export function ReservationSummary({ ticketCount, onTicketCountChange }: Props) {
   const { t } = useResponsive();
-  const [ticketCount, setTicketCount] = useState(1);
   const seatsLeft = TOTAL_SEATS - TAKEN_SEATS;
   const totalPrice = ticketCount * PRICE_PER_SEAT;
 
-  const decrement = () => setTicketCount((p) => Math.max(1, p - 1));
-  const increment = () => setTicketCount((p) => Math.min(seatsLeft, p + 1));
+  const decrement = () => onTicketCountChange(Math.max(1, ticketCount - 1));
+  const increment = () => onTicketCountChange(Math.min(seatsLeft, ticketCount + 1));
 
   return (
     <View style={{ gap: t(20, 14) }}>

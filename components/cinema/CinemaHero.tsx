@@ -4,7 +4,7 @@ import { HeroBannerBase } from '@/components/shared/HeroBannerBase';
 export function CinemaHero() {
   return (
     <HeroBannerBase
-      backgroundImage="https://c.animaapp.com/mp158p9uFQYlPn/img/hero-section.png"
+      backgroundImage={require('@/public/images/HS-4.png')}
       eyebrow="TRIO by Maham"
       title="Cinema"
       backLabel="BACK TO HOME"

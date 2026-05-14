@@ -1,21 +1,37 @@
 import { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '@/hooks';
+import { useTrayStore } from '@/store';
 
 const ADD_ONS = [
-  { label: 'Glass Of Bellini Mocktail', price: '+tbc' },
-  { label: 'Bouquet For The Table', price: '+2,500' },
-  { label: 'Extra Polaroid Print', price: '+350' },
+  { id: 'bellini-mocktail', label: 'Glass Of Bellini Mocktail', price: '+tbc' },
+  { id: 'bouquet-table', label: 'Bouquet For The Table', price: '+Rs 2,500' },
+  { id: 'polaroid-print', label: 'Extra Polaroid Print', price: '+Rs 350' },
 ];
 
 export function AddOns() {
   const { t } = useResponsive();
+  const addItem = useTrayStore((s) => s.addItem);
   const [selected, setSelected] = useState<string[]>([]);
 
-  function toggle(label: string) {
+  function toggle(id: string) {
     setSelected((prev) =>
-      prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label]
+      prev.includes(id) ? prev.filter((l) => l !== id) : [...prev, id]
     );
+  }
+
+  function handleAddToTray() {
+    const toAdd = ADD_ONS.filter((a) => selected.includes(a.id));
+    toAdd.forEach((addon) => {
+      addItem({
+        id: addon.id,
+        name: addon.label,
+        price: addon.price.replace('+', '').trim(),
+        image: null,
+        category: 'hi-tea',
+      });
+    });
+    setSelected([]);
   }
 
   return (
@@ -25,11 +41,11 @@ export function AddOns() {
       </Text>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: t(16, 10) }}>
         {ADD_ONS.map((addon) => {
-          const isActive = selected.includes(addon.label);
+          const isActive = selected.includes(addon.id);
           return (
             <TouchableOpacity
-              key={addon.label}
-              onPress={() => toggle(addon.label)}
+              key={addon.id}
+              onPress={() => toggle(addon.id)}
               activeOpacity={0.8}
               style={{
                 height: t(40, 34),
@@ -58,6 +74,28 @@ export function AddOns() {
           );
         })}
       </View>
+
+      {selected.length > 0 && (
+        <TouchableOpacity
+          activeOpacity={0.88}
+          onPress={handleAddToTray}
+          style={{
+            alignSelf: 'flex-start',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: t(8, 6),
+            backgroundColor: '#775596',
+            borderRadius: t(10, 8),
+            paddingHorizontal: t(20, 14),
+            paddingVertical: t(10, 8),
+          }}
+        >
+          <Text style={{ fontFamily: 'Inter_500Medium', fontSize: t(15, 12), color: '#ffffff' }}>
+            Add {selected.length} to Tray
+          </Text>
+          <Text style={{ fontSize: t(15, 12), color: '#ffffff' }}>→</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

@@ -19,11 +19,18 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { View } from 'react-native';
 
 import { Spinner, ToastProvider } from '@/components/ui';
 import { queryClient } from '@/services/queries';
+import { Navbar } from '@/components/home';
+import { TrayPanel } from '@/components/shared/TrayPanel';
 
 SplashScreen.preventAutoHideAsync();
+
+function NavbarOverlay() {
+  return <Navbar />;
+}
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -49,10 +56,14 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="+not-found" />
-        </Stack>
+        <View style={{ flex: 1 }}>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <NavbarOverlay />
+          <TrayPanel />
+        </View>
       </ToastProvider>
     </QueryClientProvider>
   );

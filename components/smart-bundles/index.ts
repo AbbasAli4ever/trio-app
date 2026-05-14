@@ -1,4 +1,4 @@
 export { PromoBanner } from './PromoBanner';
 export { SmartBundlesHero } from './SmartBundlesHero';
 export { PreCuratedBundles } from './PreCuratedBundles';
-export { TrayPanel } from './TrayPanel';
+export { TrayPanel } from '@/components/shared/TrayPanel';

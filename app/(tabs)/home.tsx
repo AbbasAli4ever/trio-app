@@ -6,7 +6,6 @@ import {
   CtaSection,
   HeroBanner,
   HomeHeader,
-  Navbar,
   SpecialDaysSection,
   SmartBundlesSection,
 } from '@/components/home';
@@ -16,13 +15,13 @@ export default function HomeScreen() {
   const { t } = useResponsive();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f7f6f7' }} edges={['top', 'bottom']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f7f6f7' }} edges={['top']}>
       <View style={{ flex: 1 }}>
         <HomeHeader />
         <ScrollView
           contentContainerStyle={{
             paddingTop: t(95, 82),
-            paddingBottom: t(110, 90),
+            paddingBottom: t(140, 110),
             paddingHorizontal: t(24, 16),
             gap: t(40, 24),
           }}
@@ -35,7 +34,6 @@ export default function HomeScreen() {
           <BrowseSection />
           <CtaSection />
         </ScrollView>
-        <Navbar />
       </View>
     </SafeAreaView>
   );

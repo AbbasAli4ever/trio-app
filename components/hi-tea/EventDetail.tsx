@@ -84,18 +84,9 @@ export function EventDetail() {
           </TouchableOpacity>
         </View>
 
-        {/* Right: images */}
-        <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center', alignSelf: isTablet ? 'auto' : 'center' }}>
-          <Image
-            source={{ uri: 'https://c.animaapp.com/mp158p9uFQYlPn/img/magnific-create-a-realistic-babys--2917355984-1.png' }}
-            style={{ width: t(220, 160), height: t(260, 190) }}
-            resizeMode="contain"
-          />
-          <Image
-            source={{ uri: 'https://c.animaapp.com/mp158p9uFQYlPn/img/image-11.png' }}
-            style={{ width: t(170, 120), height: t(220, 160), marginLeft: t(-88, -60) }}
-            resizeMode="contain"
-          />
+        {/* Right: robot image */}
+        <View style={{ alignItems: 'center', justifyContent: 'center', alignSelf: isTablet ? 'auto' : 'center' }}>
+          <Image source={require('@/public/hi-tea/robot.png')} style={{ width: t(320, 250), height: t(340, 270) }} resizeMode="contain" />
         </View>
       </View>
     </View>

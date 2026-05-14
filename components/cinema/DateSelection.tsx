@@ -21,17 +21,24 @@ function buildCalendar(year: number, month: number): { day: number; currentMonth
   return rows;
 }
 
-export function DateSelection() {
+type SelectedDate = { day: number; month: number; year: number };
+
+type Props = {
+  selectedDate: SelectedDate;
+  onSelectDate: (date: SelectedDate) => void;
+};
+
+export function DateSelection({ selectedDate, onSelectDate }: Props) {
   const { t, width, isTablet } = useResponsive();
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
-  const [selectedDate, setSelectedDate] = useState({ day: today.getDate(), month: today.getMonth(), year: today.getFullYear() });
 
   const rows = buildCalendar(viewYear, viewMonth);
-  const hPad = isTablet ? t(48, 32) : 32;
+  const screenHPad = isTablet ? t(48, 32) : 32;
+  const cardHPad = t(24, 16) * 2;
   const cellGap = t(11, 8);
-  const availableWidth = width - hPad;
+  const availableWidth = width - screenHPad - cardHPad;
   const cellSize = (availableWidth - cellGap * 6) / 7;
 
   const prevMonth = () => {
@@ -110,7 +117,7 @@ export function DateSelection() {
                   key={cellIdx}
                   activeOpacity={cell.currentMonth ? 0.8 : 1}
                   onPress={() => {
-                    if (cell.currentMonth) setSelectedDate({ day: cell.day, month: viewMonth, year: viewYear });
+                    if (cell.currentMonth) onSelectDate({ day: cell.day, month: viewMonth, year: viewYear });
                   }}
                   style={{
                     width: cellSize,

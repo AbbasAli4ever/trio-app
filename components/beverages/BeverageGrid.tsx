@@ -1,5 +1,6 @@
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { useResponsive } from '@/hooks';
+import { useTrayStore } from '@/store';
 
 type Tag = {
   label: string;
@@ -101,6 +102,7 @@ const BEVERAGES: Beverage[] = [
 
 export function BeverageGrid() {
   const { t, width, isTablet } = useResponsive();
+  const addItem = useTrayStore((s) => s.addItem);
 
   const cols = isTablet ? 3 : 1;
   const gap = t(16, 12);
@@ -208,6 +210,7 @@ export function BeverageGrid() {
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.85}
+              onPress={() => addItem({ id: bev.name.toLowerCase().replace(/\s+/g, '-'), name: bev.name, price: bev.price, image: bev.image, category: 'beverage' })}
               style={{
                 flex: 1,
                 height: t(44, 36),

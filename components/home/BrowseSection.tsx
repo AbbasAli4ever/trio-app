@@ -1,15 +1,27 @@
 import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { ImageBackground, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 import { useResponsive } from '@/hooks';
 import { BROWSE_CARDS } from '@/constants/homeData';
 
+const CARD_ROUTES: Record<string, string> = {
+  dining: '/(tabs)/dining',
+  beverages: '/(tabs)/beverages',
+  flowers: '/(tabs)/flowers',
+  cinema: '/(tabs)/cinema',
+  decor: '/browse-decor',
+  'hi-tea': '/(tabs)/hi-tea',
+};
+
 export function BrowseSection() {
   const { isTablet, width, t } = useResponsive();
+  const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<ScrollView>(null);
+  const isDragging = useRef(false);
 
   const cardHeight = t(200, 160);
   const gap = t(16, 12);
@@ -22,8 +34,7 @@ export function BrowseSection() {
   const totalDots = BROWSE_CARDS.length - visibleCards + 1;
   const maxIndex = totalDots - 1;
 
-  function handleScroll(e: { nativeEvent: { contentOffset: { x: number } } }) {
-    const x = e.nativeEvent.contentOffset.x;
+  function updateIndex(x: number) {
     const idx = Math.round(x / (cardWidth + gap));
     setActiveIndex(Math.max(0, Math.min(idx, maxIndex)));
   }
@@ -48,16 +59,31 @@ export function BrowseSection() {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ gap }}
-        decelerationRate="fast"
+        decelerationRate="normal"
         snapToInterval={cardWidth + gap}
         snapToAlignment="start"
-        onMomentumScrollEnd={handleScroll}
+        disableIntervalMomentum
+        onScrollBeginDrag={() => { isDragging.current = true; }}
+        onMomentumScrollEnd={(e) => {
+          isDragging.current = false;
+          updateIndex(e.nativeEvent.contentOffset.x);
+        }}
+        onScrollEndDrag={(e) => {
+          isDragging.current = false;
+          updateIndex(e.nativeEvent.contentOffset.x);
+        }}
         scrollEventThrottle={16}
       >
         {BROWSE_CARDS.map((card) => (
-          <TouchableOpacity key={card.id} activeOpacity={0.9}>
+          <View
+            key={card.id}
+            onTouchStart={() => { isDragging.current = false; }}
+            onTouchEnd={() => {
+              if (!isDragging.current) router.push(CARD_ROUTES[card.id] as any);
+            }}
+          >
             <ImageBackground
-              source={{ uri: card.backgroundImage }}
+              source={card.backgroundImage}
               style={{ width: cardWidth, height: cardHeight, borderRadius: t(16, 12), overflow: 'hidden' }}
               resizeMode="cover"
             >
@@ -87,7 +113,7 @@ export function BrowseSection() {
                 </Text>
               </View>
             </ImageBackground>
-          </TouchableOpacity>
+          </View>
         ))}
       </ScrollView>
 

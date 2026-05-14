@@ -1,10 +1,9 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 import { useResponsive } from '@/hooks';
 import { SMART_BUNDLES, type SmartBundle } from '@/constants/homeData';
-import { SpecialDayModal, BIRTHDAY_MODAL } from './SpecialDayModal';
+import { useTrayStore } from '@/store';
 
 function BundleCard({ bundle, cardWidth, cardHeight, t, onAddPress }: {
   bundle: SmartBundle;
@@ -19,7 +18,7 @@ function BundleCard({ bundle, cardWidth, cardHeight, t, onAddPress }: {
     <View style={{ width: cardWidth, height: cardHeight, borderRadius: t(20, 16), overflow: 'hidden', backgroundColor: bundle.headerBg }}>
       <View style={{ height: headerHeight, backgroundColor: bundle.headerBg }}>
         <Image
-          source={{ uri: bundle.image }}
+          source={bundle.image}
           style={{ position: 'absolute', top: 2, left: 0, width: t(177, 140), height: t(150, 120) }}
           resizeMode="cover"
         />
@@ -110,7 +109,7 @@ function BundleCard({ bundle, cardWidth, cardHeight, t, onAddPress }: {
 
 export function SmartBundlesSection() {
   const { width, t } = useResponsive();
-  const [modalVisible, setModalVisible] = useState(false);
+  const addItem = useTrayStore((s) => s.addItem);
 
   // cols: 3 on tablet (≥768), 2 on medium (≥480), 1 on small
   const cols = width >= 768 ? 3 : width >= 480 ? 2 : 1;
@@ -138,12 +137,11 @@ export function SmartBundlesSection() {
             cardWidth={cardWidth}
             cardHeight={cardHeight}
             t={t}
-            onAddPress={bundle.id === 'birthday' ? () => setModalVisible(true) : undefined}
+            onAddPress={() => addItem({ id: bundle.id, name: bundle.title, price: bundle.price, image: bundle.image, category: 'bundle' })}
           />
         ))}
       </View>
 
-      <SpecialDayModal visible={modalVisible} onClose={() => setModalVisible(false)} config={BIRTHDAY_MODAL} />
     </View>
   );
 }
