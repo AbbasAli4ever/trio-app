@@ -13,7 +13,7 @@
     "submit:android": "eas submit --platform android",
     "submit:ios": "eas submit --platform ios",
     "lint": "eslint . --ext .ts,.tsx",
-    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",   
     "format": "prettier --write \"**/*.{ts,tsx,json}\"",
     "type-check": "tsc --noEmit",
     "test": "jest"
